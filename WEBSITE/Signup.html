@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up - Nurse Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .signup-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      background-color: white;
+    }
+
+    select:required:invalid {
+      color: gray;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .login-btn {
+      background-color: #2ecc71;
+      margin-top: 5px;
+    }
+
+    .login-btn:hover {
+      background-color: #27ae60;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .signup-container {
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      input, select, button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="signup-container">
+  <h2>Nurse Sign Up</h2>
+  <form id="signupForm">
+    <input type="text" id="fullname" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="text" id="license" placeholder="PRC License No." required>
+
+    <select id="hospital" required>
+      <option value="" disabled selected>Select Hospital Name</option>
+      <option value="United Doctor of Saint Camillus">United Doctor of Saint Camillus</option>
+      <option value="Batangas Healthcare Specialists Medical Center">Batangas Healthcare Specialists Medical Center</option>
+      <option value="Batangas Health Care Hospital- Jesus of Nazareth">Batangas Health Care Hospital- Jesus of Nazareth</option>
+      <option value="Our Lady of Caysasay Medical Center">Our Lady of Caysasay Medical Center</option>
+    </select>
+
+    <input type="text" id="department" placeholder="Department" required>
+    <input type="password" id="password" placeholder="Create Password" required>
+    <button type="submit">Register</button>
+  </form>
+
+  <button class="login-btn" onclick="redirectToLogin()">Already have an account? Login</button>
+</div>
+
+<script>
+  // Save nurse data to localStorage
+  document.getElementById('signupForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const nurse = {
+      fullname: document.getElementById('fullname').value,
+      email: document.getElementById('email').value,
+      license: document.getElementById('license').value,
+      hospital: document.getElementById('hospital').value,
+      department: document.getElementById('department').value,
+      password: document.getElementById('password').value
+    };
+
+    // Save nurse data in localStorage
+    localStorage.setItem(nurse.email, JSON.stringify(nurse));
+    alert("Registration Successful!");
+
+    // Redirect to login page
+    window.location.href = "login.html";
+  });
+
+  function redirectToLogin() {
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

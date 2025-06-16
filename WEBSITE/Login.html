@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1877f2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #145dc3;
+    }
+
+    .register-btn {
+      background-color: #42b72a;
+    }
+
+    .register-btn:hover {
+      background-color: #36a420;
+    }
+
+    #message {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* Responsive font & spacing for very small screens */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+
+      .login-container {
+        padding: 20px;
+      }
+
+      input, button {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+
+    /* Optional: tablet-specific tweaks */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .login-container {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Nurse Login</h2>
+    <input type="text" id="username" placeholder="Enter email" />
+    <input type="password" id="password" placeholder="Enter password" />
+    <button onclick="login()">Login</button>
+    <button class="register-btn" onclick="location.href='Signup.html'">No account? Register here</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+      const message = document.getElementById('message');
+
+      const nurseData = JSON.parse(localStorage.getItem(email));
+
+      if (!nurseData || nurseData.password !== pass) {
+        message.textContent = 'Invalid email or password.';
+        return;
+      }
+
+      // Save current nurse info to sessionStorage for use on SBAR.html
+      sessionStorage.setItem("currentNurse", JSON.stringify(nurseData));
+
+      // Redirect to SBAR.html
+      window.location.href = "SBAR.html";
+    }
+  </script>
+</body>
+</html>
