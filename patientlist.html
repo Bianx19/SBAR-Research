@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    .navbar {
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2c3e50;
+      color: white;
+    }
+
+    .navbar h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .menu-btn {
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      color: white;
+      border: none;
+      padding: 10px;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      right: 0;
+      background: #eee;
+      overflow-x: hidden;
+      transition: 0.3s ease;
+      padding-top: 60px;
+      z-index: 1001;
+      border-left: 1px solid #ccc;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 15px 20px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .sidebar a:hover {
+      background: #ddd;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      display: none;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    #searchInput {
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;  
+    }
+
+    th {
+      background-color: rgb(111, 174, 241); 
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .view-btn {
+      background: rgb(221, 221, 9);
+    }
+
+    .edit-btn {
+      background: rgb(6, 188, 6);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .navbar h2 {
+        font-size: 1.2rem;
+      }
+
+      th, td {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+
+      .edit-btn, .view-btn {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Overlay -->
+  <div id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <h2>👥 Patient List</h2>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+  </div>
+
+  <!-- Sidebar Menu -->
+  <div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" onclick="toggleSidebar()">❌ Close</a>
+    <a href="index.html">🏠 Home</a>
+    <a href="login.html">🔓 Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <input type="text" id="searchInput" placeholder="Search by name..." oninput="renderPatients()" />
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Room</th>
+            <th>Diagnosis</th>
+            <th>Submitted By</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="patientTableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("mySidebar");
+      const overlay = document.getElementById("overlay");
+
+      if (sidebar.style.width === "250px") {
+        sidebar.style.width = "0";
+        overlay.style.display = "none";
+      } else {
+        sidebar.style.width = "250px";
+        overlay.style.display = "block";
+      }
+    }
+
+    const nurse = JSON.parse(sessionStorage.getItem("currentNurse"));
+    if (!nurse) {
+      alert("Not logged in. Redirecting to login page...");
+      window.location.href = "login.html";
+    }
+
+    const patients = JSON.parse(localStorage.getItem(nurse.hospital)) || [];
+
+    function renderPatients() {
+      const searchValue = document.getElementById("searchInput").value.toLowerCase();
+      const tbody = document.getElementById("patientTableBody");
+      tbody.innerHTML = "";
+
+      patients.forEach((p, index) => {
+        if (p.pname.toLowerCase().includes(searchValue)) {
+          const tr = document.createElement("tr");
+
+          // Highlight the row if it matches the search
+          if (searchValue) {
+            tr.style.backgroundColor = "#d6f5d6"; // Light green
+          }
+
+          tr.innerHTML = `
+            <td>${p.pname}</td>
+            <td>${p.room}</td>
+            <td>${p.diagnosis}</td>
+            <td>${p.nurse}</td>
+            <td>${p.timestamp || 'N/A'}</td>
+            <td>
+              <button class="view-btn" onclick="viewPatient(${index})">View</button>
+              <button class="edit-btn" onclick="editPatient(${index})">Edit</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function viewPatient(index) {
+      const patient = patients[index];
+      sessionStorage.setItem("viewPatient", JSON.stringify(patient));
+      window.location.href = "SBAR.html";
+    }
+
+    function editPatient(index) {
+      const patient = patients[index];
+      sessionStorage.setItem("editPatient", JSON.stringify({ data: patient, index }));
+      window.location.href = "SBAR.html";
+    }
+
+    // Initial render
+    renderPatients();
+  </script>
+
+</body>
+</html>
